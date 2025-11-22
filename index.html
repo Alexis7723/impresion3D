@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Impresión 3D ÉPICA • Todo lo que necesitas saber</title>
+    <script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --naranja: #FF5E00;
+            --azul: #00D4FF;
+            --amarillo: #FFD600;
+            --morado: #9D00FF;
+        }
+        body {
+            margin: 0;
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        header {
+            text-align: center;
+            padding: 40px 20px;
+        }
+        h1 {
+            font-family: 'Fredoka One', cursive;
+            font-size: 4.5em;
+            background: linear-gradient(90deg, var(--naranja), var(--amarillo));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin: 0;
+            text-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+        h2 {
+            font-family: 'Fredoka One', cursive;
+            font-size: 2.8em;
+            color: var(--amarillo);
+            text-shadow: 0 5px 20px rgba(0,0,0,0.6);
+            margin-top: 50px;
+        }
+        .section {
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(15px);
+            border-radius: 25px;
+            padding: 35px;
+            margin: 40px 0;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.4);
+            border: 2px solid rgba(255,255,255,0.2);
+        }
+        p, li {
+            font-size: 1.2em;
+            line-height: 1.8;
+        }
+        ul {
+            padding-left: 30px;
+        }
+        li {
+            margin: 15px 0;
+        }
+        model-viewer {
+            width: 100%;
+            height: 480px;
+            border-radius: 20px;
+            margin: 30px 0;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.6);
+        }
+        .highlight {
+            background: rgba(255,94,0,0.3);
+            padding: 20px;
+            border-radius: 15px;
+            border-left: 8px solid var(--naranja);
+            margin: 25px 0;
+        }
+
+        /* Botón impresora flotante */
+        #boton-chat {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 90px;
+            height: 90px;
+            background: var(--naranja);
+            border-radius: 50%;
+            box-shadow: 0 15px 40px rgba(255,94,0,0.7);
+            cursor: pointer;
+            z-index: 9999;
+            border: 6px solid white;
+            transition: all 0.3s;
+        }
+        #boton-chat:hover { transform: scale(1.2) rotate(10deg); }
+
+        /* ChatGipiti */
+        #chatgipiti {
+            position: fixed;
+            bottom: 140px;
+            right: 30px;
+            width: 400px;
+            height: 600px;
+            background: white;
+            border-radius: 30px;
+            box-shadow: 0 30px 80px rgba(0,0,0,0.6);
+            overflow: hidden;
+            z-index: 9998;
+            transform: scale(0);
+            transform-origin: bottom right;
+            transition: transform 0.4s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+        }
+        #chatgipiti.abierto { transform: scale(1); }
+        #chat-header {
+            background: linear-gradient(45deg, var(--naranja), #ff8e53);
+            color: white;
+            padding: 25px;
+            text-align: center;
+            font-size: 1.5em;
+            font-weight: bold;
+            position: relative;
+        }
+        #foto-perfil {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            border: 5px solid white;
+            position: absolute;
+            left: 20px;
+            top: 15px;
+            object-fit: cover;
+        }
+        #chat-body {
+            height: 450px;
+            padding: 20px;
+            overflow-y: auto;
+            background: #f0f2f5;
+        }
+        .msg {
+            margin: 15px 0;
+            padding: 14px 20px;
+            border-radius: 25px;
+            max-width: 80%;
+            animation: fadeIn 0.5s;
+        }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } }
+        .user { background: var(--azul); color: white; margin-left: auto; }
+        .bot { background: white; color: #333; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
+        #chat-input {
+            padding: 20px;
+            background: white;
+            display: flex;
+            gap: 10px;
+        }
+        #chat-input input {
+            flex: 1;
+            padding: 16px;
+            border: none;
+            border-radius: 30px;
+            background: #f0f0f0;
+            font-size: 1.1em;
+        }
+        #chat-input button {
+            width: 55px;
+            height: 55px;
+            background: var(--naranja);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            font-size: 1.6em;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+
+    <header>
+        <h1>IMPRESIÓN 3D</h1>
+        <p style="font-size:2em; margin:20px 0;">La guía definitiva para crear objetos reales desde tu computadora</p>
+    </header>
+
+    <div class="section">
+        <h2>¿Qué es una Impresora 3D?</h2>
+        <p>Una impresora 3D es una máquina que crea objetos físicos capa por capa a partir de un diseño digital. ¡Es como tener una fábrica en miniatura en tu cuarto!</p>
+        <div class="highlight">
+            <strong>Funciona así:</strong> Derrite plástico (o resina) y lo deposita con precisión milimétrica hasta formar tu figura.
+        </div>
+        <model-viewer src="https://modelviewer.dev/shared-assets/models/Astronaut.glb" auto-rotate camera-controls ar></model-viewer>
+    </div>
+
+    <div class="section">
+        <h2>Los 6 Pasos para Imprimir Cualquier Cosa</h2>
+        <ol style="font-size:1.3em;">
+            <li><strong>Diseñar</strong> → Tinkercad, Blender o Fusion 360</li>
+            <li><strong>Exportar como STL</strong> → El formato universal 3D</li>
+            <li><strong>Laminar</strong> → Usar Cura o PrusaSlicer</li>
+            <li><strong>Configurar</strong> → Capas, relleno, soportes</li>
+            <li><strong>Imprimir</strong> → ¡La magia sucede aquí!</li>
+            <li><strong>Post-procesado</strong> → Lijar, pintar, brillar</li>
+        </ol>
+    </div>
+
+    <div class="section">
+        <h2>Tipos de Impresoras 3D</h2>
+        <ul>
+            <li><strong>FDM (la más común)</strong> → Usa filamento (PLA, PETG, ABS)</li>
+            <li><strong>Resina (SLA/DLP)</strong> → Máxima calidad y detalle</li>
+            <li><strong>SLS</strong> → Polvo de nylon (para profesionales)</li>
+        </ul>
+        <model-viewer src="https://cdn.thingiverse.com/assets/2f/9e/6d/1f/0f/lowpoly_cat.stl" camera-controls auto-rotate></model-viewer>
+    </div>
+
+    <div class="section">
+        <h2>Materiales Más Usados</h2>
+        <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(250px,1fr)); gap:20px;">
+            <div class="highlight"><strong>PLA</strong><br>El rey de los principiantes. Fácil, barato y huele rico.</div>
+            <div class="highlight"><strong>PETG</strong><br>Más fuerte que PLA, resistente al agua.</div>
+            <div class="highlight"><strong>ABS</strong><br>Resistente al calor (necesita cama caliente).</div>
+            <div class="highlight"><strong>TPU</strong><br>Flexible, como goma. Ideal para fundas.</div>
+        </div>
+    </div>
+
+    <div class="section">
+        <h2>Ejemplo de Pieza Terminada</h2>
+        <p>¡Mira este casco épico impreso, lijado y pintado!</p>
+        <model-viewer src="https://cdn.jsdelivr.net/gh/mrdoob/three.js@master/examples/models/gltf/DamagedHelmet/glTF/DamagedHelmet.gltf" 
+                      camera-controls exposure="1.8"></model-viewer>
+    </div>
+
+    <div class="section">
+        <h2>Consejos de Oro</h2>
+        <ul>
+            <li>Nivela bien la cama → 90% de los problemas desaparecen</li>
+            <li>Usa laca de pelo barata → adherencia perfecta</li>
+            <li>Mantiene el filamento seco → evita burbujas</li>
+            <li>No toques la boquilla caliente → duele (hablo por experiencia)</li>
+        </ul>
+    </div>
+
+</div>
+
+<!-- Botón Impresora Flotante -->
+<div id="boton-chat" onclick="toggleChat()">
+    <model-viewer src="https://modelviewer.dev/shared-assets/models/Horse.glb" camera-controls></model-viewer>
+</div>
+
+<!-- ChatGipiti -->
+<div id="chatgipiti">
+    <div id="chat-header" style="position:relative;">
+        <img src="https://i.postimg.cc/7hYkYkYk/paco-amoroso-papota-avatar.jpg" alt="ChatGipiti - Paco Amoroso de Papota" id="foto-perfil">
+        ChatGipiti 3D
+    </div>
+    <div id="chat-body">
+        <div class="chat-messages">
+            <div class="msg bot">¡BRRRRR! Impresora encendida. Soy ChatGipiti, tu pana experto en impresión 3D. ¿En qué te ayudo hoy?</div>
+        </div>
+    </div>
+    <div id="chat-input">
+        <input type="text" id="userInput" placeholder="Escribe aquí...">
+        <button onclick="sendMessage()">Enviar</button>
+    </div>
+</div>
+
+<script>
+function toggleChat() {
+    document.getElementById("chatgipiti").classList.toggle("abierto");
+}
+
+function sendMessage() {
+    const input = document.getElementById("userInput");
+    const msg = input.value.trim();
+    if (!msg) return;
+
+    const chat = document.querySelector(".chat-messages");
+    const user = document.createElement("div");
+    user.className = "msg user";
+    user.textContent = msg;
+    chat.appendChild(user);
+
+    setTimeout(() => {
+        const bot = document.createElement("div");
+        bot.className = "msg bot";
+        const respuestas = [
+            "¡Bro, nivelación de cama o nada! Es la ley.",
+            "PLA siempre. El resto es para valientes.",
+            "Soportes = vida. No seas héroe.",
+            "Laca Nelly + cama a 60°C = amor eterno.",
+            "Si sale spaghetti... reinicia y llora un poco.",
+            "¡Esa boquilla está más limpia que mi futuro!"
+        ];
+        bot.textContent = respuestas[Math.floor(Math.random() * respuestas.length)];
+        chat.appendChild(bot);
+        chat.scrollTop = chat.scrollHeight;
+    }, 900);
+
+    input.value = "";
+    chat.scrollTop = chat.scrollHeight;
+}
+
+document.getElementById("userInput").addEventListener("keypress", e => {
+    if (e.key === "Enter") sendMessage();
+});
+</script>
+
+</body>
+</html>
